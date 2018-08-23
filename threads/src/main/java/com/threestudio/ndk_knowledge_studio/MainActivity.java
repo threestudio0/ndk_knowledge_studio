@@ -16,7 +16,7 @@ public class MainActivity extends AppCompatActivity {
 
     // Used to load the 'native-lib' library on application startup.
     static {
-        System.loadLibrary("native-lib");
+        System.loadLibrary("threads_sample-lib");
     }
 
     @Override
@@ -51,6 +51,24 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    private void javaThread(int threads,final int iterations)
+    {
+        for(int i = 0;i < threads; i++)
+        {
+            final  int id = i;
+            Thread thread = new Thread(){
+                @Override
+                public void run() {
+                    nativeWorker(id,iterations);
+                }
+            };
+            thread.start();
+
+        }
+    }
+
+
+
     private void onNativeMessage(final String message){
         runOnUiThread(new Runnable() {
             @Override
@@ -62,6 +80,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void startThreads(int threads, int iterations) {
+        //javaThread(threads,iterations);
+        posixThreads(threads,iterations);
+
     }
 
     private int getNumber(EditText editText, int defaultValue) {
@@ -81,4 +102,5 @@ public class MainActivity extends AppCompatActivity {
     public native void nativeInit();
     public native void nativeFree();
     public native void nativeWorker(int id,int iterations);
+    public native void posixThreads(int Threads,int iterations);
 }
